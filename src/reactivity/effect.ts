@@ -82,13 +82,27 @@ export function track(target, key) {
     depsMap.set(key, dep);
   }
 
+  trackEffects(dep);
+}
+
+export function trackEffects(dep) {
   if (dep.has(activeEffect)) return;
   dep.add(activeEffect);
   // activeEffect反向收集dep
   activeEffect?.deps?.add(dep);
 }
 
-function isTracking() {
+export function triggerEffects(dep) {
+  for (const effect of dep) {
+    if (effect.scheduler) {
+      effect.scheduler();
+    } else {
+      effect?.run();
+    }
+  }
+}
+
+export function isTracking() {
   return shouldTrack && activeEffect !== undefined;
 }
 
@@ -97,13 +111,6 @@ export function trigger(target, key) {
   const depsMap = targetMap.get(target);
   const dep = depsMap.get(key);
   if (dep) {
-    // dep.forEach((effect) => effect.run());
-    for (const effect of dep) {
-      if (effect.scheduler) {
-        effect.scheduler();
-      } else {
-        effect?.run();
-      }
-    }
+    triggerEffects(dep);
   }
 }
