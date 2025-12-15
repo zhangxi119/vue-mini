@@ -4,7 +4,7 @@ let activeEffect;
 let shouldTrack;
 const targetMap = new Map();
 
-class ReactiveEffect {
+export class ReactiveEffect {
   private _fn: any;
   public deps: any = new Set();
   // 是否是激活状态（非stop状态）
