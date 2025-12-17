@@ -1,3 +1,5 @@
+import { h } from "../../lib/min-vue.es.js";
+
 // 创建App组件
 export const App = {
   render() {

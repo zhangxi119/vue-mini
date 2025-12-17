@@ -10,6 +10,7 @@ function patch(vnode: any, container: any) {
   // 初次渲染
 
   // 判断是不是 element 类型 TODO
+
   processComponent(vnode, container);
 }
 
