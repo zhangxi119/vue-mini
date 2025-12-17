@@ -1,7 +1,8 @@
 {
   "name": "vue-mini",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "lib/mini-vue.cjs.js",
+  "module": "lib/mini-vue.esm.js",
   "type": "module",
   "license": "MIT",
   "scripts": {
