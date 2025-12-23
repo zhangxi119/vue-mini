@@ -1,3 +1,5 @@
+import { PublicInstanceProxyHandlers } from "./componentPublicInstance";
+
 export function createComponentInstance(vnode: any) {
   const componet = {
     vnode,
@@ -23,6 +25,9 @@ export function setupComponent(instance: any) {
 
 export function setupStatefulComponent(instance: any) {
   const Component = instance.type;
+
+  instance.proxy = new Proxy({ _: instance }, PublicInstanceProxyHandlers);
+
   const { setup } = Component;
 
   if (setup) {

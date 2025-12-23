@@ -33,7 +33,7 @@ function processElement(vnode: any, container: any) {
 function mountElement(vnode: any, container: any) {
   const { type, children, props } = vnode;
 
-  const el = document.createElement(type);
+  const el = (vnode.el = document.createElement(type));
 
   // children -> string
   if (typeof children === "string") {
@@ -59,18 +59,23 @@ function mountChildren(vnode: any, container: any) {
 }
 
 // 挂载组件
-function mountComponent(vnode: any, container: any) {
-  const instance = createComponentInstance(vnode);
+function mountComponent(initialVnode: any, container: any) {
+  const instance = createComponentInstance(initialVnode);
 
   setupComponent(instance);
 
-  setupRenderEffect(instance, container);
+  setupRenderEffect(instance, initialVnode, container);
 }
 
-function setupRenderEffect(instance: any, container: any) {
-  const subTree = instance.render();
+function setupRenderEffect(instance: any, initialVnode, container: any) {
+  const { proxy } = instance;
+
+  const subTree = instance.render.call(proxy);
 
   // vnode -> patch
   // vnode -> element -> patch
   patch(subTree, container);
+
+  // element -> mount 挂载后获取el实例，挂载到vnode上
+  initialVnode.el = subTree.el;
 }
