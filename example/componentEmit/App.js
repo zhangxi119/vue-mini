@@ -12,18 +12,26 @@ export const App = {
         id: "root",
         class: ["red", "hard"],
         onClick() {
-          console.log("click");
+          // console.log("click");
         },
         onMousedown() {
-          console.log("onMousedown");
+          // console.log("onMousedown");
         },
       },
-      [h("div", {}, `hi, ${this.msg}`), h(Foo, { count: 666 })]
-      // string
-      // "hi, " + this.msg
-
-      // array
-      // [h("p", { class: "red" }, "hi"), h("p", { class: "blue" }, "vue")]
+      [
+        h("div", {}, `hi, ${this.msg}`),
+        h(Foo, {
+          count: 666,
+          onAdd(a, b) {
+            console.log("App onAdd has been call");
+            console.log(a, b);
+          },
+          // add-foo -> addFoo
+          onAddFoo() {
+            console.log("addFoo has been call");
+          },
+        }),
+      ]
     );
   },
 
