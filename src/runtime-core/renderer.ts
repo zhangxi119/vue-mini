@@ -1,6 +1,6 @@
-import { isObject } from "../shared/index";
 import { createComponentInstance, setupComponent } from "./component";
 import { ShapeFlags } from "../shared/ShapeFlags";
+import { Fragment, Text } from "./vnode";
 
 export function render(vnode: any, container: any) {
   // 调用 patch 挂载
@@ -9,17 +9,36 @@ export function render(vnode: any, container: any) {
 
 // 核心方法 - patch
 function patch(vnode: any, container: any) {
-  // 初次渲染
+  const { type, shapeFlag } = vnode;
 
-  // 判断是不是 element 类型 TODO
-  console.log(vnode.type);
-  const { shapeFlag } = vnode;
+  console.log("vnode.type", type);
 
-  if (shapeFlag & ShapeFlags.ELEMENT) {
-    processElement(vnode, container);
-  } else if (shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
-    processComponent(vnode, container);
+  switch (type) {
+    case Fragment:
+      processFragment(vnode, container);
+      break;
+    case Text:
+      processText(vnode, container);
+      break;
+    default:
+      if (shapeFlag & ShapeFlags.ELEMENT) {
+        processElement(vnode, container);
+      } else if (shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
+        processComponent(vnode, container);
+      }
+      break;
   }
+}
+
+// 处理 Text
+function processText(vnode: any, container: any) {
+  const el = (vnode.el = document.createTextNode(vnode.children));
+  container.appendChild(el);
+}
+
+// 处理 Fragment
+function processFragment(vnode: any, container: any) {
+  mountChildren(vnode, container);
 }
 
 // 处理组件

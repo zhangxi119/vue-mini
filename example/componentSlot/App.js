@@ -1,4 +1,4 @@
-import { h } from "../../lib/mini-vue.esm.js";
+import { h, createTextVNode } from "../../lib/mini-vue.esm.js";
 import { Foo } from "./Foo.js";
 
 // 创建App组件
@@ -12,7 +12,10 @@ export const App = {
       {
         default: () => [h("p", {}, "123"), h("p", {}, "456")],
         header: ({ age }) => h("p", {}, "header" + age),
-        footer: () => [h("p", {}, "footer")],
+        footer: () => [
+          h("span", {}, "footer-"),
+          createTextVNode("footerText..."),
+        ],
       }
     );
 
