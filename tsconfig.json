@@ -19,6 +19,7 @@
     "sourceMap": true,
     "declaration": false,
     "declarationMap": false,
+    // "moduleResolution": "node",
 
     // Stricter Typechecking Options
     "noUncheckedIndexedAccess": true,
