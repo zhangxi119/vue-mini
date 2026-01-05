@@ -1,6 +1,7 @@
 import { createComponentInstance, setupComponent } from "./component";
 import { createAppApi } from "./createApp";
 import { ShapeFlags } from "../shared/ShapeFlags";
+import { EMPTY_OBJ } from "../shared/index";
 import { Fragment, Text } from "./vnode";
 import { effect } from "../reactivity";
 
@@ -94,7 +95,7 @@ export function createRenderer(options: any) {
     // props
     for (let key in props) {
       const val = props[key];
-      hostPatchProps(el, key, val);
+      hostPatchProps(el, key, null, val);
     }
 
     // container.appendChild(el);
@@ -110,8 +111,36 @@ export function createRenderer(options: any) {
     console.log("patchElement");
     console.log("n1", n1);
     console.log("n2", n2);
-    // patchProps(el, oldProps, newProps);
+
+    const oldProps = n1.props || EMPTY_OBJ;
+    const newProps = n2.props || EMPTY_OBJ;
+
+    const el = (n2.el = n1.el);
+    patchProps(el, oldProps, newProps);
     // patchChildren(n1, n2, el, parentComponent);
+  }
+
+  function patchProps(el, oldProps, newProps) {
+    if (oldProps !== newProps) {
+      for (let key in newProps) {
+        const prevProp = oldProps[key];
+        const nextProp = newProps[key];
+        if (prevProp !== nextProp) {
+          hostPatchProps(el, key, prevProp, nextProp);
+        }
+      }
+
+      // 删除属性
+      if (oldProps !== EMPTY_OBJ) {
+        for (let key in oldProps) {
+          if (key in newProps) {
+            continue;
+          }
+          const prevProp = oldProps[key];
+          hostPatchProps(el, key, prevProp, null);
+        }
+      }
+    }
   }
 
   // 挂载子元素
