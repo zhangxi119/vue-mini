@@ -8,7 +8,7 @@
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
     "module": "esnext",
-    "target": "es5",
+    "target": "es2016",
     "types": ["jest"],
     // For nodejs:
     "lib": ["esnext", "dom"],
@@ -19,7 +19,7 @@
     "sourceMap": true,
     "declaration": false,
     "declarationMap": false,
-    // "moduleResolution": "node",
+    "moduleResolution": "node",
 
     // Stricter Typechecking Options
     "noUncheckedIndexedAccess": true,
