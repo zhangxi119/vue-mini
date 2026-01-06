@@ -4,8 +4,9 @@ function createElement(type: string) {
   return document.createElement(type);
 }
 
-function insert(el: any, parent: any) {
-  parent.appendChild(el);
+function insert(el: any, parent: any, anchor: any = null) {
+  // parent.appendChild(el);
+  parent.insertBefore(el, anchor);
 }
 
 function patchProps(el: any, key: any, prevValue: any, nextValue: any) {
