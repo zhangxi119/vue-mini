@@ -10,6 +10,8 @@ export function createRenderer(options: any) {
     createElement: hostCreateElement,
     insert: hostInsert,
     patchProps: hostPatchProps,
+    remove: hostRemove,
+    setElementText: hostSetElementText,
   } = options;
 
   function render(vnode: any, container: any) {
@@ -53,7 +55,7 @@ export function createRenderer(options: any) {
     container: any,
     parentComponent: any
   ) {
-    mountChildren(n2, container, parentComponent);
+    mountChildren(n2.children, container, parentComponent);
   }
 
   // 处理组件
@@ -89,7 +91,7 @@ export function createRenderer(options: any) {
     if (shapeFlag & ShapeFlags.TEXT_CHILDREN) {
       el.textContent = children;
     } else if (shapeFlag & ShapeFlags.ARRAY_CHILDREN) {
-      mountChildren(vnode, el, parentComponent);
+      mountChildren(children, el, parentComponent);
     }
 
     // props
@@ -117,7 +119,42 @@ export function createRenderer(options: any) {
 
     const el = (n2.el = n1.el);
     patchProps(el, oldProps, newProps);
-    // patchChildren(n1, n2, el, parentComponent);
+    patchChildren(n1, n2, el, parentComponent);
+  }
+
+  function patchChildren(n1: any, n2: any, container: any, parentComponent: any) {
+    const prevShapeFlag = n1.shapeFlag;
+    const shapeFlag = n2.shapeFlag;
+    const c1 = n1.children;
+    const c2 = n2.children;
+
+    // 新节点是文本节点的情况
+    if (shapeFlag & ShapeFlags.TEXT_CHILDREN) {
+      if (prevShapeFlag & ShapeFlags.ARRAY_CHILDREN) {
+        // 旧子节点是数组,把老的 children 清空
+        unmountChildren(n1.children);
+      }
+      if (c1 !== c2) {
+        // 旧子节点是文本})
+        hostSetElementText(container, c2);
+      }
+    } else {
+      // 新节点是数组的情况
+      // 旧节点是文本
+      if (prevShapeFlag & ShapeFlags.TEXT_CHILDREN) {
+        hostSetElementText(container, "");
+        mountChildren(n2.children, container, parentComponent);
+      }
+    }
+
+  }
+
+  function unmountChildren(children: any) {
+    for (let i = 0; i < children.length; i++) {
+      const el = children[i].el;
+      // remove child
+      hostRemove(el);
+    }
   }
 
   function patchProps(el, oldProps, newProps) {
@@ -144,8 +181,8 @@ export function createRenderer(options: any) {
   }
 
   // 挂载子元素
-  function mountChildren(vnode: any, container: any, parentComponent: any) {
-    vnode.children.forEach((v: any) => {
+  function mountChildren(children: any, container: any, parentComponent: any) {
+    children.forEach((v: any) => {
       patch(null, v, container, parentComponent);
     });
   }
