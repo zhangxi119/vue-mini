@@ -1,7 +1,7 @@
 import { createComponentInstance, setupComponent } from "./component";
 import { createAppApi } from "./createApp";
 import { ShapeFlags } from "../shared/ShapeFlags";
-import { EMPTY_OBJ } from "../shared/index";
+import { EMPTY_OBJ, isSameVNode } from "../shared/index";
 import { Fragment, Text } from "./vnode";
 import { effect } from "../reactivity";
 
@@ -210,14 +210,52 @@ export function createRenderer(options: any) {
       }
     } else {
       // 5.中间对比 - 最复杂的部分
-      // TODO
+      
+      let s1 = i;
+      let s2 = i;
+
+      const keyToNewIndexMap = new Map()
+
+      let patched = 0; // 已经 patched 的数量
+      const toBePatched = e2 - s2 + 1; // 新节点中间部分的数量
+
+      // 建立新节点的索引映射表
+      for (let i = s2; i <= e2; i++) {
+        const nextChild = c2[i];
+        keyToNewIndexMap.set(nextChild.key, i);
+      }
+      // 旧节点查找最新的映射表
+      for(let i = s1; i <= e1; i++) {
+        const preChild = c1[i];
+
+        if(patched >= toBePatched) {
+          hostRemove(preChild.el);
+          continue;
+        }
+
+        let newIndex;
+        // null undefined
+        if (preChild.key != null) {
+          newIndex = keyToNewIndexMap.get(preChild.key);
+        } else {
+          for(let j = s2; j <= e2; j++) {
+            if (isSameVNode(preChild, c2[j])) {
+              newIndex = j;
+              break;
+            }
+          }
+        }
+        // 没有newIndex表明不存在于新节点中，删除
+        if (newIndex === undefined) {
+          hostRemove(preChild.el);
+        } else {
+          // 存在则更新
+          patch(preChild, c2[newIndex], container, parentComponent, null);
+          patched++;
+        }
+      }
     }
 
-  }
-
-  function isSameVNode(n1: any, n2: any) {
-    // type + key
-    return n1.type === n2.type && n1.key === n2.key;
   }
 
   function unmountChildren(children: any) {

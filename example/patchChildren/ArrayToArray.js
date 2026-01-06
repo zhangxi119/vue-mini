@@ -64,16 +64,35 @@ import { h, ref } from "../../lib/mini-vue.esm.js";
 //   h("div", { key: "B" }, "B"),
 // ];
 // - 右侧的对比
+// const prevChildren = [
+//   h("div", { key: "A" }, "A"),
+//   h("div", { key: "B" }, "B"),
+//   h("div", { key: "C" }, "C"),
+//   h("div", { key: "D" }, "D")
+// ];
+// const nextChildren = [
+//   h("div", { key: "C" }, "C"),
+//   h("div", { key: "D" }, "D")
+// ];
+
+// 4.乱序的对比
 const prevChildren = [
   h("div", { key: "A" }, "A"),
   h("div", { key: "B" }, "B"),
-  h("div", { key: "C" }, "C"),
-  h("div", { key: "D" }, "D")
+  h("div", { key: "C", id: 'c-id' }, "C"),
+  h("div", { key: "D" }, "D"),
+  h("div", { key: "F" }, "F"),
+  h("div", { key: "G" }, "G")
 ];
 const nextChildren = [
-  h("div", { key: "C" }, "C"),
-  h("div", { key: "D" }, "D")
+  h("div", { key: "A" }, "A"),
+  h("div", { key: "B" }, "B"),
+  h("div", { key: "E" }, "E"),
+  h("div", { key: "C", id: 'c-id-new' }, "C"),
+  h("div", { key: "F" }, "F"),
+  h("div", { key: "G" }, "G")
 ];
+
 
 export const ArrayToArray = {
   setup(props) {

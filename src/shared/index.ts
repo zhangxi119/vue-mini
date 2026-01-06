@@ -29,3 +29,8 @@ export const toHandlerKey = (str: string) => {
 };
 
 export const EMPTY_OBJ = {};
+
+export const isSameVNode = (n1: any, n2: any) => {
+  // type + key
+  return n1.type === n2.type && n1.key === n2.key;
+}
